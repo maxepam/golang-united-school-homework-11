@@ -15,7 +15,7 @@ func getOne(id int64) user {
 }
 
 func getBatch(n int64, pool int64) (res []user) {
-	//channel for data
+	//channel with buffer for data
 	ch := make(chan user, int(n))
 	
 	//determine wait group for semaphore logic
@@ -35,10 +35,10 @@ func getBatch(n int64, pool int64) (res []user) {
 			wg.Done()
 		}(i)
 	}
-	//wait until all wait groups are done
+	//wait until all goroutines is executed
 	wg.Wait()
 	
-	//close a channel
+	//close a channel for writting
 	close(ch)
 
 	//read users from channel
@@ -46,6 +46,6 @@ func getBatch(n int64, pool int64) (res []user) {
 	for u := range ch {
 		users = append(users, u)
 	}
-	
+
 	return users
 }
